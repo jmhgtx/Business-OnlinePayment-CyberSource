@@ -60,12 +60,16 @@ sub set_defaults {
 
 sub load_config {
 	my $self = shift;
+    my $params = shift;
 
 	# The default is /etc/
 	my $conf_file = ( $self->can('conf_file') && $self->conf_file )
 	  || '/etc/cybs.ini';
 
 	my %config = CyberSource::SOAPI::cybs_load_config($conf_file);
+    foreach my $param ( keys %{ $params->{config} } ) {
+		$config{ $param } = $params->{config}->{param};
+	}
 
 	return \%config;
 }
@@ -540,6 +544,7 @@ sub request_merge { ## no critic ( Subroutines::RequireFinalReturn )
   # One step transaction, the simple case.
   ####
 
+  my $con
   my $tx = Business::OnlinePayment->new("CyberSource",
                                        conf_file => '/path/to/cybs.ini'");
   $tx->content(
@@ -657,6 +662,28 @@ sub request_merge { ## no critic ( Subroutines::RequireFinalReturn )
       print "Card was rejected: ".$tx->error_message."\n";
   }
 
+  ##  Send config hash
+  my $tx = Business::OnlinePayment->new("CyberSource",
+				config => {
+					merchantID       => $CYBS_ID,
+					keysDirectory    => $CYBS_KEY,
+					sendToProduction => 'false',
+					targetAPIVersion => '1.6',
+					keyFilename      => '/etc/cybs.ini',
+					serverURL        => 'https://ics2wstest.ic3.com/commerce/1.x/transactionProcessor/',
+					namespaceURI     => 'urn:schemas-cybersource-com:transaction-data-1.18',
+					enableLog        => 'true',
+					logDirectory     => '/path/to/logfile',
+					logFilename      => 'cybs.log',
+					logMaximumSize   => '10',
+					sslCertFile      => 'ca-bundle.crt',
+					timeout          => 110,
+					proxyServer      => 'servername.com:1080,
+					proxyUsername    => 'someuser',
+					proxyPassword    => 'abcd1234',
+				},
+  );
+
 =head1 DESCRIPTION
 
 For detailed information see L<Business::OnlinePayment>.
@@ -670,6 +697,94 @@ For detailed information see L<Business::OnlinePayment>.
 loads C<cybs.ini>
 
 =item C<map_fields>
+
+=item C<config_params>
+
+=over 4
+
+=item *
+
+merchantID        Merchant ID. The client uses this value if you do not specify a merchand ID in the request itself.
+
+=item *
+
+keysDirectory     Location of the merchants security key. The client includes a keys directory that you can use.
+
+=item *
+
+sendToProduction  Indicates whether or not to use the production server. 'true': use the production server, 'false': use the test server.
+
+=item *
+
+targetAPIVersion  Version of the Simple Order API to use. See L<https://ics2ws.ic3.com/commerce/1.x/transactionProcessor/>
+
+=item *
+
+keyFilename       Name of the merchants security key filename if the user has changed it from <merchantID>.p12
+
+=item *
+
+serverURL         Alternative server URL.
+
+=item *
+
+namespaceURI      Alternative server URI.
+
+=item *
+
+enableLog         Flag directing the client to log transactions and errors. 'true': enable logging, 'false': do not enable logging.
+
+=item *
+
+logDirectory      Directory in which to write the log file. Note that the client will not create the directory. It has to exist.
+
+=item *
+
+logFilename       Log file name. Defaults to cybs.log
+
+=item *
+
+logMaximumSize    Maximum size of the log file in megabytes. Defaults to 10. When the logfile reaches the specified size it is archived
+                  as cybs.log.<timestamp>
+
+=item *
+
+sslCertFile       The location of the bundled file of CA Root Certificates which is included in the client download package.
+
+=item *
+
+timeout           Length of timeout in seconds. The default is 110.
+
+=item *
+
+proxyServer       Proxy server to use. Allowable formats include:
+
+=over 24
+
+=item *
+
+<http://>server<:port>
+
+=item *
+
+<http://>IP address<:port>
+
+=back
+
+                 The http:// and port are options. Defaults to port 1080.
+
+=item *
+
+proxyUsername    The username used to authenticate against the proxy server if required. If the proxy server requires the domain name
+                 during authentication, add the domain name and a backslash: <domainname>\<username>
+
+=item *
+
+proxyPassword    Password used to authenticate against the proxy server if required.
+
+=back
+
+=back
 
 =item C<request_merge>
 
