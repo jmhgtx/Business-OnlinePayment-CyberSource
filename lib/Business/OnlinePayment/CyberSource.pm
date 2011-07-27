@@ -22,7 +22,17 @@ has config => (
 	traits   => ['Hash'],
 	required => 1,
 	lazy     => 1,
-	default  => \&_load_config,
+	default  => sub {
+		my $self = shift;
+
+		# The default is /etc/
+		my $conf_file = ( $self->can('conf_file') && $self->conf_file )
+			|| '/etc/cybs.ini';
+
+		my $config = { CyberSource::SOAPI::cybs_load_config($conf_file) };
+
+		return $config;
+	},
 	handles  => {
 		get_config => 'get',
 	},
@@ -71,29 +81,6 @@ sub set_defaults {
 			credit_reply afs_reply failure_status security_key request_token
 			)
 	);
-}
-
-sub _load_config {
-	my $self = shift;
-
-	# The default is /etc/
-	my $conf_file = ( $self->can('conf_file') && $self->conf_file )
-		|| '/etc/cybs.ini';
-
-	my $config = { CyberSource::SOAPI::cybs_load_config($conf_file) };
-
-	return $config;
-}
-
-before load_config => sub {
-	carp 'DEPRECATED: do not call load_config directly, it will be removed '
-		. 'as a public method in the next version'
-		;
-};
-
-sub load_config {
-	my $self = shift;
-	return $self->_load_config;
 }
 
 sub map_fields {
