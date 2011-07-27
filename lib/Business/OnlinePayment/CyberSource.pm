@@ -23,6 +23,9 @@ has config => (
 	required => 1,
 	lazy     => 1,
 	default  => \&_load_config,
+	handles  => {
+		get_config => 'get',
+	},
 );
 
 # ACTION MAP
@@ -117,7 +120,8 @@ sub get_fields {
 sub submit {    ## no critic ( Subroutines::ProhibitExcessComplexity )
 	my ($self) = @_;
 
-	$self->{config} ||= $self->_load_config;
+	$self->{config} = $self->config;
+
 	my $content = $self->{'_content'};
 
 	my $reply   = {};
@@ -129,7 +133,7 @@ sub submit {    ## no critic ( Subroutines::ProhibitExcessComplexity )
 	if ( !defined( $content->{'login'} )
 		|| $content->{'login'} eq '' )
 	{
-		$content->{'login'} = $self->{config}->{'merchantID'};
+		$content->{'login'} = $self->get_config('merchantID');
 	}
 
 	$self->required_fields(qw(action login invoice_number));
@@ -317,12 +321,12 @@ sub submit {    ## no critic ( Subroutines::ProhibitExcessComplexity )
 # it still sends to live
 
 	if (
-		$self->{config}->{'sendToProduction'}
-		&& ( lc( $self->{config}->{'sendToProduction'} ) eq 'true'
-			|| $self->{config}->{'sendToProduction'} eq '' )
+		$self->get_config('sendToProduction')
+		&& ( lc( $self->get_config('sendToProduction') ) eq 'true'
+			|| $self->get_config('sendToProduction') eq '' )
 		)
 	{
-		$self->{config}->{'sendToProduction'} =
+		$self->get_config('sendToProduction') =
 			$self->test_transaction() ? "false" : "true";
 	}
 
@@ -330,29 +334,29 @@ sub submit {    ## no critic ( Subroutines::ProhibitExcessComplexity )
 # Use the configuration values for some of the business logic - However, let the request override these...
 #
 	if (  !defined( $request->{'businessRules_declineAVSFlags'} )
-		&& defined( $self->{config}->{'businessRules_declineAVSFlags'} ) )
+		&& defined( $self->get_config('businessRules_declineAVSFlags') ) )
 	{
 		$request->{'businessRules_declineAVSFlags'} =
-			$self->{config}->{'businessRules_declineAVSFlags'};
+			$self->get_config('businessRules_declineAVSFlags');
 	}
 	if (  !defined( $request->{'businessRules_ignoreAVSResult'} )
-		&& defined( $self->{config}->{'businessRules_ignoreAVSResult'} ) )
+		&& defined( $self->get_config('businessRules_ignoreAVSResult') ) )
 	{
 		$request->{'businessRules_ignoreAVSResult'} =
-			$self->{config}->{'businessRules_ignoreAVSResult'};
+			$self->get_config('businessRules_ignoreAVSResult');
 	}
 	if (  !defined( $request->{'businessRules_ignoreCVResult'} )
 		&& defined( $self->{config}->{'businessRules_ignoreCVResult'} ) )
 	{
 		$request->{'businessRules_ignoreCVResult'} =
-			$self->{config}->{'businessRules_ignoreCVResult'};
+			$self->get_config('businessRules_ignoreCVResult');
 	}
 
 #####
 ###Heres the Magic
 #####
 	my $cybs_return_code =
-		CyberSource::SOAPI::cybs_run_transaction( $self->{config}, $request,
+		CyberSource::SOAPI::cybs_run_transaction( $self->config, $request,
 		$reply );
 
 	if ( $cybs_return_code != CyberSource::SOAPI::CYBS_S_OK ) {
