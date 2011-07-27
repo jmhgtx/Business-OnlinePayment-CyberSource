@@ -542,6 +542,7 @@ sub request_merge {    ## no critic ( Subroutines::RequireFinalReturn )
 	}
 }
 
+__PACKAGE__->meta->make_immutable;
 1;
 
 # ABSTRACT: CyberSource backend for Business::OnlinePayment
