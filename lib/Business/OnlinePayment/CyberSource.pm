@@ -7,17 +7,14 @@ our @CARP_NOT = qw(Business::OnlinePayment);
 BEGIN {
 	# VERSION
 }
-BEGIN {
-	# VERSION
-}
 use Moose;
 use namespace::autoclean;
 
-use Business::OnlinePayment;
+extends 'Business::OnlinePayment';
+
+use Carp;
 use Business::OnlinePayment::CyberSource::Error;
 use CyberSource::SOAPI;
-
-use parent 'Business::OnlinePayment';
 
 
 has config => (
@@ -542,7 +539,7 @@ sub request_merge {    ## no critic ( Subroutines::RequireFinalReturn )
 	}
 }
 
-__PACKAGE__->meta->make_immutable;
+__PACKAGE__->meta->make_immutable( inline_constructor => 0 );
 1;
 
 # ABSTRACT: CyberSource backend for Business::OnlinePayment
