@@ -1,19 +1,24 @@
 package Business::OnlinePayment::CyberSource;
-use 5.006;
+use 5.010;
 use strict;
 use warnings;
 use Carp;
-our @CARP_NOT = qw(Class::Method::Modifiers Business::OnlinePayment);
+our @CARP_NOT = qw(Business::OnlinePayment);
 BEGIN {
 	# VERSION
 }
+BEGIN {
+	# VERSION
+}
+use Moose;
+use namespace::autoclean;
+
 use Business::OnlinePayment;
 use Business::OnlinePayment::CyberSource::Error;
 use CyberSource::SOAPI;
 
 use parent 'Business::OnlinePayment';
 
-use Class::Method::Modifiers;
 
 my $config = {};
 
