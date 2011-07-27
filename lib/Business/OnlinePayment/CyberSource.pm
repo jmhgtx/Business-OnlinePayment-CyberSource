@@ -683,6 +683,94 @@ loads C<cybs.ini>
 
 =item C<map_fields>
 
+=item C<config_params>
+
+=over 4
+ 
+=item *
+
+merchantID        Merchant ID. The client uses this value if you do not specify a merchand ID in the request itself.
+
+=item *
+
+keysDirectory     Location of the merchants security key. The client includes a keys directory that you can use.
+
+=item *
+ 
+sendToProduction  Indicates whether or not to use the production server. 'true': use the production server, 'false': use the test server.
+
+=item *
+
+targetAPIVersion  Version of the Simple Order API to use. See L<https://ics2ws.ic3.com/commerce/1.x/transactionProcessor/> 
+
+=item *
+
+keyFilename       Name of the merchants security key filename if the user has changed it from <merchantID>.p12
+
+=item *
+
+serverURL         Alternative server URL.
+
+=item *
+
+namespaceURI      Alternative server URI.
+
+=item *
+
+enableLog         Flag directing the client to log transactions and errors. 'true': enable logging, 'false': do not enable logging.
+
+=item *
+ 
+logDirectory      Directory in which to write the log file. Note that the client will not create the directory. It has to exist.
+
+=item *
+
+logFilename       Log file name. Defaults to cybs.log
+
+=item *
+
+logMaximumSize    Maximum size of the log file in megabytes. Defaults to 10. When the logfile reaches the specified size it is archived 
+                  as cybs.log.<timestamp>
+
+=item *
+
+sslCertFile       The location of the bundled file of CA Root Certificates which is included in the client download package.
+
+=item *
+
+timeout           Length of timeout in seconds. The default is 110.
+
+=item * 
+
+proxyServer       Proxy server to use. Allowable formats include:
+
+=over 24
+
+=item *
+
+<http://>server<:port>
+
+=item *
+
+<http://>IP address<:port>
+
+=back
+
+                 The http:// and port are options. Defaults to port 1080.
+
+=item *
+
+proxyUsername    The username used to authenticate against the proxy server if required. If the proxy server requires the domain name
+                 during authentication, add the domain name and a backslash: <domainname>\<username>
+
+=item *
+
+proxyPassword    Password used to authenticate against the proxy server if required.
+
+=back
+
+=back
+
 =item C<request_merge>
 
 =item C<set_defaults>
