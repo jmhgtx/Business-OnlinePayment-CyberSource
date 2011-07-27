@@ -22,7 +22,7 @@ has config => (
 	traits   => ['Hash'],
 	required => 1,
 	lazy     => 1,
-	default  => \&load_config,
+	default  => \&_load_config,
 );
 
 # ACTION MAP
