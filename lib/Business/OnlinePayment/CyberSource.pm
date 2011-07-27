@@ -20,7 +20,12 @@ use CyberSource::SOAPI;
 use parent 'Business::OnlinePayment';
 
 
-my $config = {};
+has config => (
+	is       => 'rw',
+	isa      => 'HashRef[Str]',
+	traits   => ['Hash'],
+	required => 1,
+);
 
 # ACTION MAP
 my @action_list = (
