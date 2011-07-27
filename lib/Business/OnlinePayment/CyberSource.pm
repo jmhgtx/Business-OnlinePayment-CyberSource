@@ -9,19 +9,20 @@ BEGIN {
 }
 use Moose;
 use namespace::autoclean;
+use MooseX::NonMoose;
 
-extends 'Business::OnlinePayment';
-
-use Carp;
 use Business::OnlinePayment::CyberSource::Error;
 use CyberSource::SOAPI;
 
+extends 'Business::OnlinePayment';
 
 has config => (
 	is       => 'rw',
 	isa      => 'HashRef[Str]',
 	traits   => ['Hash'],
 	required => 1,
+	lazy     => 1,
+	default  => \&load_config,
 );
 
 # ACTION MAP
@@ -76,9 +77,9 @@ sub _load_config {
 	my $conf_file = ( $self->can('conf_file') && $self->conf_file )
 		|| '/etc/cybs.ini';
 
-	my %config = CyberSource::SOAPI::cybs_load_config($conf_file);
+	my $config = { CyberSource::SOAPI::cybs_load_config($conf_file) };
 
-	return \%config;
+	return $config;
 }
 
 before load_config => sub {
@@ -539,7 +540,7 @@ sub request_merge {    ## no critic ( Subroutines::RequireFinalReturn )
 	}
 }
 
-__PACKAGE__->meta->make_immutable( inline_constructor => 0 );
+__PACKAGE__->meta->make_immutable;
 1;
 
 # ABSTRACT: CyberSource backend for Business::OnlinePayment
