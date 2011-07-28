@@ -12,31 +12,35 @@ use namespace::autoclean;
 use MooseX::NonMoose;
 
 use Business::OnlinePayment::CyberSource::Error;
-use CyberSource::SOAPI;
 
-extends 'Business::OnlinePayment';
+BEGIN {
+	extends 'Business::OnlinePayment';
 
-has config => (
-	is       => 'rw',
-	isa      => 'HashRef[Str]',
-	traits   => ['Hash'],
-	required => 1,
-	lazy     => 1,
-	default  => sub {
-		my $self = shift;
+	use English qw( -no_match_vars );
 
-		# The default is /etc/
-		my $conf_file = ( $self->can('conf_file') && $self->conf_file )
-			|| '/etc/cybs.ini';
+	my $backend = 'SOAPI';
 
-		my $config = { CyberSource::SOAPI::cybs_load_config($conf_file) };
+	given ( $backend ) {
+		when ( /SOAPI/ ) {
+			eval 'use CyberSource::SOAPI';
+			unless ( $EVAL_ERROR ) {
+				with 'Business::OnlinePayment::CyberSource::Role::SOAPI';
+			} else {
+				no CyberSource::SOAPI;
+			}
+		}
+		when ( /SOAP/ ) {
+			eval 'use Checkout::CyberSource::SOAP';
+			unless ( $EVAL_ERROR ) {
+				with 'Business::OnlinePayment::CyberSource::Role::SOAP';
+			} else {
+				no Checkout::CyberSource::SOAP;
+			}
+		}
+	}
+	no English;
+}
 
-		return $config;
-	},
-	handles  => {
-		get_config => 'get',
-	},
-);
 
 # ACTION MAP
 my @action_list = (
