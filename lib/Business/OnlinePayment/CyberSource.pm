@@ -12,35 +12,27 @@ use namespace::autoclean;
 use MooseX::NonMoose;
 
 use Business::OnlinePayment::CyberSource::Error;
+extends 'Business::OnlinePayment';
 
-BEGIN {
-	extends 'Business::OnlinePayment';
-
+{
 	use English qw( -no_match_vars );
+	use Module::Load::Conditional qw( can_load requires );
 
-	my $backend = 'SOAPI';
+	my $backend = 'CyberSource::SOAPI'; # replace me
 
-	given ( $backend ) {
-		when ( /SOAPI/ ) {
-			eval { use CyberSource::SOAPI };
-			unless ( $EVAL_ERROR ) {
+	if ( can_load( modules => { $backend => undef } ) ) {
+		given ( $backend ) {
+			when ( /CyberSource::SOAPI/ ) {
 				with 'Business::OnlinePayment::CyberSource::Role::SOAPI';
-			} else {
-				no CyberSource::SOAPI;
 			}
-		}
-		when ( /SOAP/ ) {
-			eval { use Checkout::CyberSource::SOAP };
-			unless ( $EVAL_ERROR ) {
+			when ( /Checkout::CyberSource::SOAP/ ) {
 				with 'Business::OnlinePayment::CyberSource::Role::SOAP';
-			} else {
-				no Checkout::CyberSource::SOAP;
 			}
 		}
+	} else {
+		croak 'can not load backend ' . $backend;
 	}
-	no English;
 }
-
 
 # ACTION MAP
 my @action_list = (
