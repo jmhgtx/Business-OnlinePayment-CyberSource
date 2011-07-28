@@ -1,17 +1,13 @@
 package Business::OnlinePayment::CyberSource::Role::SOAPI;
 use strict;
 use warnings;
+use Carp;
 use Moose::Role;
 use namespace::autoclean;
 BEGIN {
 	# VERSION
-
-	use Carp;
-	use English qw( -no_match_vars );
-	eval "use CyberSource::SOAPI";
-	croak 'unable to load CyberSource::SOAPI' if $EVAL_ERROR;
-	no English;
 }
+use CyberSource::SOAPI;
 
 has config => (
 	is       => 'rw',
