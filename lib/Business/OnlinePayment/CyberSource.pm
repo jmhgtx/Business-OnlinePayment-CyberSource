@@ -347,29 +347,29 @@ sub submit {    ## no critic ( Subroutines::ProhibitExcessComplexity )
 ###Heres the Magic
 #####
 	my $cybs_return_code =
-		CyberSource::SOAPI::cybs_run_transaction( $self->config, $request,
+		&CyberSource::SOAPI::cybs_run_transaction( $self->config, $request,
 		$reply );
 
-	if ( $cybs_return_code != CyberSource::SOAPI::CYBS_S_OK ) {
+	if ( $cybs_return_code != CyberSource::SOAPI->CYBS_S_OK ) {
 		$self->is_success(0);
-		if ( $cybs_return_code == CyberSource::SOAPI::CYBS_S_PERL_PARAM_ERROR )
+		if ( $cybs_return_code == CyberSource::SOAPI->CYBS_S_PERL_PARAM_ERROR )
 		{
 			$self->error_message( 'A parsing error occurred '
 					. '- there is a problem with one or more of the parameters.'
 			);
 		}
-		elsif ( $cybs_return_code == CyberSource::SOAPI::CYBS_S_PRE_SEND_ERROR )
+		elsif ( $cybs_return_code == CyberSource::SOAPI->CYBS_S_PRE_SEND_ERROR )
 		{
 			$self->error_message( 'Could not create the request - '
 					. 'There is probably an error with your client configuration.'
 					. ' More Information: "'
-					. $reply->{CyberSource::SOAPI::CYBS_SK_ERROR_INFO} );
+					. $reply->{CyberSource::SOAPI->CYBS_SK_ERROR_INFO} );
 		}
-		elsif ( $cybs_return_code == CyberSource::SOAPI::CYBS_S_PRE_SEND_ERROR )
+		elsif ( $cybs_return_code == CyberSource::SOAPI->CYBS_S_PRE_SEND_ERROR )
 		{
 			$self->error_message(
 				'Something bad happened while sending. More Information: "'
-					. $reply->{CyberSource::SOAPI::CYBS_SK_ERROR_INFO}
+					. $reply->{CyberSource::SOAPI->CYBS_SK_ERROR_INFO}
 					. '"' );
 		}
 		else {
@@ -378,11 +378,11 @@ sub submit {    ## no critic ( Subroutines::ProhibitExcessComplexity )
 					. 'blown up. '
 					. 'Check the business center to figure it out. '
 					. 'Good Luck... More Information: "'
-					. $reply->{CyberSource::SOAPI::CYBS_SK_ERROR_INFO}
+					. $reply->{CyberSource::SOAPI->CYBS_SK_ERROR_INFO}
 					. '" Raw Error: "'
-					. $reply->{CyberSource::SOAPI::CYBS_SK_RAW_REPLY}
+					. $reply->{CyberSource::SOAPI->CYBS_SK_RAW_REPLY}
 					. '" Probable Request ID: "'
-					. $reply->{CyberSource::SOAPI::CYBS_SK_FAULT_REQUEST_ID}
+					. $reply->{CyberSource::SOAPI->CYBS_SK_FAULT_REQUEST_ID}
 					. '" return code: "'
 					. $cybs_return_code
 					. '"' );
