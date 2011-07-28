@@ -22,10 +22,10 @@ extends 'Business::OnlinePayment';
 
 	if ( can_load( modules => { $backend => undef } ) ) {
 		given ( $backend ) {
-			when ( /CyberSource::SOAPI/ ) {
+			when ( /CyberSource::SOAPI/xms ) {
 				with 'Business::OnlinePayment::CyberSource::Role::SOAPI';
 			}
-			when ( /Checkout::CyberSource::SOAP/ ) {
+			when ( /Checkout::CyberSource::SOAP/xms ) {
 				with 'Business::OnlinePayment::CyberSource::Role::SOAP';
 			}
 		}
