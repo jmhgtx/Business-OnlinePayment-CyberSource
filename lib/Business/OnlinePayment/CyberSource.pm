@@ -22,7 +22,7 @@ BEGIN {
 
 	given ( $backend ) {
 		when ( /SOAPI/ ) {
-			eval 'use CyberSource::SOAPI';
+			eval { use CyberSource::SOAPI };
 			unless ( $EVAL_ERROR ) {
 				with 'Business::OnlinePayment::CyberSource::Role::SOAPI';
 			} else {
@@ -30,7 +30,7 @@ BEGIN {
 			}
 		}
 		when ( /SOAP/ ) {
-			eval 'use Checkout::CyberSource::SOAP';
+			eval { use Checkout::CyberSource::SOAP };
 			unless ( $EVAL_ERROR ) {
 				with 'Business::OnlinePayment::CyberSource::Role::SOAP';
 			} else {
