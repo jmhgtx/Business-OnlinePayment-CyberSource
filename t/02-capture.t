@@ -5,6 +5,11 @@ use Test::More;
 #testing/testing is valid and seems to work... (but not for auth + capture)
 use Business::OnlinePayment;
 
+BEGIN {
+    eval 'use CyberSource::SOAPI';
+    plan skip_all => 'Skipping without CyberSourcw::SOAPI' if $@;
+}
+
 plan skip_all => 'You must have the default configuration file: '
 	.'/etc/cybs.ini configured'
 	unless -e '/etc/cybs.ini';
