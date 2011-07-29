@@ -9,7 +9,7 @@ use Business::OnlinePayment;
 
 BEGIN {
     eval 'use CyberSource::SOAPI';
-    plan skip_all => 'Skipping without CyberSourcw::SOAPI' if $@;
+    plan skip_all => 'Skipping without CyberSource::SOAPI' if $@;
 }
 
 plan skip_all => 'You must have the default configuration file: '

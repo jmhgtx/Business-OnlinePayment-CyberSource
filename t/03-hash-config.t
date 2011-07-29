@@ -8,7 +8,7 @@ use Test::More;
 
 BEGIN {
     eval 'use CyberSource::SOAPI';
-    plan skip_all => 'Skipping without CyberSourcw::SOAPI' if $@;
+    plan skip_all => 'Skipping without CyberSource::SOAPI' if $@;
 }
 
 plan skip_all => 'You MUST set ENV variable CYBS_ID and CYBS_KEY_DIR to test this!'
